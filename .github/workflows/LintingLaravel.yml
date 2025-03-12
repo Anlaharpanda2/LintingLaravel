@@ -3,25 +3,35 @@ name: LintingLaravel
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
-  test:
-    runs-on: windows-latest
+  lint:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install HTMLHint & Stylelint
-        run: |
-          npm install -g htmlhint stylelint
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Periksa HTML
-        run: htmlhint "**/*.html"
+      - name: Install Laravel Pint (PHP Linter)
+        run: composer global require laravel/pint
 
-      - name: Periksa CSS
-        run: stylelint "**/*.css"
+      - name: Install HTMLHint
+        run: npm install -g htmlhint
+
+      - name: Periksa HTML (Blade)
+        run: htmlhint resources/views/frontend/error.blade.php
+
+      - name: Periksa Sintaks PHP (Blade)
+        run: php -l resources/views/frontend/error.blade.php
+
+      - name: Periksa Kode Laravel (PHP Pint)
+        run: ~/.composer/vendor/bin/pint --test resources/views/frontend/error.blade.php
