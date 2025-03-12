@@ -1,4 +1,4 @@
-name: HTML Linting Untuk Laravel
+name: LintingLaravel
 
 on:
   push:
@@ -9,20 +9,19 @@ on:
       - main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+      - name: Install HTMLHint & Stylelint
+        run: |
+          npm install -g htmlhint stylelint
 
-      - name: Install HTMLHint
-        run: npm install -g htmlhint
+      - name: Periksa HTML
+        run: htmlhint "**/*.html"
 
-      - name: Periksa HTML & Blade Files
-        run: htmlhint "resources/views/**/*.blade.php" "public/**/*.html"
+      - name: Periksa CSS
+        run: stylelint "**/*.css"
